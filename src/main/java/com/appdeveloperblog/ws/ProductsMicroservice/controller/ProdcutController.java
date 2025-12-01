@@ -1,6 +1,8 @@
 package com.appdeveloperblog.ws.ProductsMicroservice.controller;
 
 import com.appdeveloperblog.ws.ProductsMicroservice.models.CreateProductRestModel;
+import com.appdeveloperblog.ws.ProductsMicroservice.services.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,11 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProdcutController {
+
+    private final ProductService productService;
+
 
     @PostMapping
     public ResponseEntity<String> createProduct(@RequestBody CreateProductRestModel product){
+        String productId = productService.productService(product);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("");
+                .body(productId);
     }
 }
