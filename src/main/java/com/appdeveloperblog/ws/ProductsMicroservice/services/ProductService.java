@@ -4,5 +4,5 @@ import com.appdeveloperblog.ws.ProductsMicroservice.models.CreateProductRestMode
 
 public interface ProductService {
 
-    String productService(CreateProductRestModel productRestModel);
+    String productService(CreateProductRestModel productRestModel) throws Exception;
 }
