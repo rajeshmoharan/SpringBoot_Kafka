@@ -1,6 +1,6 @@
 package com.appdeveloperblog.ws.ProductsMicroservice;
 
-import com.appdeveloperblog.ws.ProductsMicroservice.services.ProductCreatedEvent;
+import com.core.core.ProductCreatedEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +41,12 @@ public class KafkaTopic {
     @Value("${spring.kafka.producer.properties.request.timeout.ms}")
     private String requestTimeout;
 
+    @Value("${spring.kafka.producer.enable-idempotence}")
+    private String idemopotence;
+
+    @Value("${spring.kafka.producer.properties.max.in.flight.requests.per.connection}")
+    private String inFlightRequests;
+
     Map<String,Object> producerConfigs(){
 
         Map<String,Object> config = new HashMap<>();
@@ -53,6 +59,8 @@ public class KafkaTopic {
         config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG,deliveryTimeout);
         config.put(ProducerConfig.LINGER_MS_CONFIG,linger);
         config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG,requestTimeout);
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG,idemopotence);
+        config.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION,inFlightRequests);
 
         return config;
     }
@@ -70,7 +78,7 @@ public class KafkaTopic {
 
     @Bean
     NewTopic createTopic(){
-        return TopicBuilder.name("product-created-event-topic")
+            return TopicBuilder.name("product-created-event-topic")
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas","2"))

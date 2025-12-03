@@ -1,6 +1,7 @@
 package com.appdeveloperblog.ws.ProductsMicroservice.services;
 
 import com.appdeveloperblog.ws.ProductsMicroservice.models.CreateProductRestModel;
+import com.core.core.ProductCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,19 +16,15 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class ProductServiceImpl implements ProductService{
 
-    private final KafkaTemplate<String,ProductCreatedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate;
 
 
     @Override
     public String productService(CreateProductRestModel productRestModel) throws Exception{
 
         String productId = UUID.randomUUID().toString();
-        ProductCreatedEvent productCreatedEvent = ProductCreatedEvent.builder()
-                .productId(productId)
-                .price(productRestModel.getPrice())
-                .title(productRestModel.getTitle())
-                .quantity(productRestModel.getQuantity())
-                .build();
+        ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent(productId,productRestModel.getTitle(),productRestModel.getPrice(),productRestModel.getQuantity());
+                
 
         SendResult<String, ProductCreatedEvent> result = kafkaTemplate
                 .send("product-created-event-topic", productId, productCreatedEvent).get();
